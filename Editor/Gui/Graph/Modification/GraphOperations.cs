@@ -35,9 +35,9 @@ namespace T3.Editor.Gui.Graph.Modification
         /// Updates symbol definition, instances and symbolUi if modification to operator source code
         /// was detected by Resource file hook.
         /// </summary>
-        public static void UpdateChangedOperators()
+        public static void UpdateChangedOperators(bool forceUpdate= false)
         {
-            var modifiedSymbols = OperatorResource.UpdateChangedOperatorTypes();
+            var modifiedSymbols = OperatorResource.UpdateChangedOperatorTypes(forceUpdate);
             foreach (var symbol in modifiedSymbols)
             {
                 UiSymbolData.UpdateUiEntriesForSymbol(symbol);

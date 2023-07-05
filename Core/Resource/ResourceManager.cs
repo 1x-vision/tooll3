@@ -722,7 +722,7 @@ namespace T3.Core.Resource
             }
         }
         
-        public uint CreateOperatorEntry(string sourceFilePath, string name, OperatorResource.UpdateDelegate updateHandler)
+        public OperatorResource CreateOperatorEntry(string sourceFilePath, string name, OperatorResource.UpdateDelegate updateHandler)
         {
             // todo: code below is redundant with all file resources -> refactor
             if (ResourceFileWatcher._resourceFileHooks.TryGetValue(sourceFilePath, out var fileResource))
@@ -731,7 +731,7 @@ namespace T3.Core.Resource
                 {
                     if (ResourcesById[id] is OperatorResource)
                     {
-                        return id;
+                        return null;
                     }
                 }
             }
@@ -750,7 +750,7 @@ namespace T3.Core.Resource
                 fileResource.ResourceIds.Add(resourceEntry.Id);
             }
 
-            return resourceEntry.Id;
+            return resourceEntry;
         }
 
 

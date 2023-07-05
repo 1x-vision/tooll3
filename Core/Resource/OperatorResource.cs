@@ -31,17 +31,18 @@ namespace T3.Core.Resource
         {
             _updateHandler?.Invoke(this, path);
         }
+        
 
         /// <summary>
         /// Updates symbol definition, instances if modification to operator source code
         /// was detected by Resource file hook.
         /// </summary>
-        public static List<Symbol> UpdateChangedOperatorTypes()
+        public static List<Symbol> UpdateChangedOperatorTypes(bool forceUpdate= false)
         {
             _modifiedSymbols.Clear();
             foreach (var opResource in _operators)
             {
-                if (!opResource.Updated)
+                if (!forceUpdate && !opResource.Updated)
                     continue;
 
                 var type = opResource.OperatorAssembly.ExportedTypes.FirstOrDefault();

@@ -111,8 +111,14 @@ namespace T3.Editor
             foreach (var (_, symbol) in SymbolRegistry.Entries)
             {
                 var sourceFilePath = SymbolData.BuildFilepathForSymbol(symbol, SymbolData.SourceExtension);
-                ResourceManager.Instance().CreateOperatorEntry(sourceFilePath, symbol.Id.ToString(), OperatorUpdating.ResourceUpdateHandler);
+                var newResourceEntry = ResourceManager.Instance().CreateOperatorEntry(sourceFilePath, symbol.Id.ToString(), OperatorUpdating.ResourceUpdateHandler);
+              
+                // Force compilation
+                OperatorUpdating.ResourceUpdateHandler(newResourceEntry, sourceFilePath);
             }
+
+            //bool forceRebuildAllOps = true;
+            //GraphOperations.UpdateChangedOperators(forceRebuildAllOps);
 
             ShaderResourceView viewWindowBackgroundSrv = null;
 
