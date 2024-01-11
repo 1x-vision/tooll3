@@ -20,7 +20,7 @@ public class SceneSetup : IEditableInputType
 
     private Point[] Positions;
 
-    private List<PbrMaterial> Materials;
+    public List<PbrMaterial> Materials;
 
     // private Dictionary<string, string> MaterialAssignments;
 

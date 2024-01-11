@@ -1,15 +1,35 @@
+using System;
+using System.Collections.Generic;
 using SharpDX.Direct3D11;
 using T3.Core.DataTypes;
+using T3.Core.Logging;
 using T3.Core.Operator;
 using T3.Core.Operator.Attributes;
+using T3.Core.Operator.Interfaces;
 using T3.Core.Operator.Slots;
+using T3.Core.Rendering.Material;
 
 namespace T3.Operators.Types.Id_a3c5471e_079b_4d4b_886a_ec02d6428ff6
 {
-    public class DrawMesh : Instance<DrawMesh>
+    public class DrawMesh : Instance<DrawMesh>, ICustomDropdownHolder
     {
         [Output(Guid = "53b3fdca-9d5e-4808-a02f-4aa743cd8456")]
         public readonly Slot<Command> Output = new();
+        
+        
+        public DrawMesh()
+        {
+            Output.UpdateAction = Update;
+        }
+
+
+        private void Update(EvaluationContext context)
+        {
+            Log.Debug("Here", this);
+            _pbrMaterials = context.Materials;
+        }
+        
+
 
         [Input(Guid = "97429e1f-3f30-4789-89a6-8e930e356ee6")]
         public readonly InputSlot<T3.Core.DataTypes.MeshBuffers> Mesh = new();
@@ -39,8 +59,42 @@ namespace T3.Operators.Types.Id_a3c5471e_079b_4d4b_886a_ec02d6428ff6
         public readonly InputSlot<SharpDX.Direct3D11.Filter> Filter = new();
 
         [Input(Guid = "d1db33ea-1739-4323-9105-7b236a0e240f")]
-        public readonly InputSlot<SharpDX.Direct3D11.TextureAddressMode> AddressU = new InputSlot<SharpDX.Direct3D11.TextureAddressMode>();
+        public readonly InputSlot<SharpDX.Direct3D11.TextureAddressMode> WrapMode = new();
+        
+        [Input(Guid = "D7BD3003-8589-4537-92E8-E95C5EB2BFAB")]
+        public readonly InputSlot<string> UseMaterialId = new ();
 
+        
+        public string GetValueForInput(Guid inputId)
+        {
+            if (inputId != UseMaterialId.Input.InputDefinition.Id)
+                return "Undefined input";
+
+            return "Default";
+        }
+
+        public IEnumerable<string> GetOptionsForInput(Guid inputId)
+        {
+            yield return "Default";
+            
+            if(_pbrMaterials == null)
+                yield break;
+
+            foreach (var m in _pbrMaterials)
+            {
+                yield return string.IsNullOrEmpty(m.Name) ? "undefined" : m.Name;
+            }
+        }
+
+        public void HandleResultForInput(Guid inputId, string result)
+        {
+            if (inputId != UseMaterialId.Input.InputDefinition.Id)
+                return;
+            
+            UseMaterialId.SetTypedInputValue(result);
+        }
+
+        private List<PbrMaterial> _pbrMaterials;
     }
 }
 
